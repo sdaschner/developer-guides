@@ -11,6 +11,7 @@
 [abstract]
 {description}
 The library provides convenient access to Neo4j including object mapping, Spring Data repositories, conversion, transaction handling, reactive support, and more.
+
 .Prerequisites
 [abstract]
 * Familiarity with xref:graph-database.adoc[graph database] concepts and the xref:graph-database.adoc#property-graph[property graph model].
