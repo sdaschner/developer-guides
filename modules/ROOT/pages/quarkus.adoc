@@ -12,7 +12,7 @@
 {description}
 
 include::./_includes/common-language-prereq.adoc[]
-For these examples, please use JDK 11 or later, a recent Maven installation, and your favorite IDE.
+For these examples, please use JDK 17 or later, a recent Maven installation, and your favorite IDE.
 If you want to run a Neo4j database locally, you also need Docker installed.
 
 [role=expertise {level}]
@@ -184,6 +184,34 @@ The `@JsonbTypeSerializer` annotation controls how the entity objects are mapped
 
 You can follow the code in the `MovieResource`, `SearchResource`, `ActorsResource`, and `GraphResource` JAX-RS classes to comprehend the individual use cases.
 
+Another helpful OGM feature added in `4.0` is the mapping of DTO classes and Java records.
+These types are mapped from arbitrary query results and the corresponding classes don't have to be annotated.
+For an example see the `Persons` class and the usage of the `session.queryDto()` method:
+
+[source,java]
+----
+@ApplicationScoped
+public class Persons {
+
+    @Inject
+    SessionFactory sessionFactory;
+
+    public List<ActorRecommendation> recommendCoActor(String name) {
+        Session session = sessionFactory.openSession();
+        return session.queryDto(" MATCH (actor:Person {name: $name}) [...] " +
+			      " [...] " +
+            " RETURN cocoActors.name AS actor, count(*) AS strength ORDER BY strength DESC",
+            Map.of("name", name), ActorRecommendation.class);
+    }
+}
+----
+
+[source,java]
+----
+public record ActorRecommendation(String actor, long strength) {
+
+}
+----
 
 //Your Quarkus application can be integrated with Neo4j OGM in order to provide declarative object mappings for your domain entities.
 //There is an official https://github.com/neo4j/neo4j-ogm-quarkus[Quarkus extension^] available, that we recommend to use unless you have a reason not to do so.
